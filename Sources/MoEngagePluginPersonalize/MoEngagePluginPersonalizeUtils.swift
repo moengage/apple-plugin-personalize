@@ -6,7 +6,7 @@
 //
 
 import Foundation
-import MoEngagePersonalize
+import MoEngagePersonalization
 import MoEngagePluginBase
 
 class MoEngagePluginPersonalizeUtils {
@@ -20,7 +20,7 @@ class MoEngagePluginPersonalizeUtils {
             return [
                 MoEngagePluginPersonalizeConstants.Personalize.experienceKey: meta.experienceKey,
                 MoEngagePluginPersonalizeConstants.Personalize.experienceName: meta.experienceName,
-                MoEngagePluginPersonalizeConstants.Personalize.status: MoEngageExperienceStatusUtils.getString(from: meta.status)
+                MoEngagePluginPersonalizeConstants.Personalize.status: experienceStatusString(meta.status)
             ]
         }
 
@@ -82,6 +82,19 @@ class MoEngagePluginPersonalizeUtils {
 
     // MARK: - Private Helpers
 
+    private static func experienceStatusString(_ status: MoEngageExperienceStatus) -> String {
+        switch status {
+        case .active:
+            return MoEngagePluginPersonalizeConstants.ExperienceStatusValues.active
+        case .paused:
+            return MoEngagePluginPersonalizeConstants.ExperienceStatusValues.paused
+        case .scheduled:
+            return MoEngagePluginPersonalizeConstants.ExperienceStatusValues.scheduled
+        @unknown default:
+            return MoEngagePluginPersonalizeConstants.ExperienceStatusValues.active
+        }
+    }
+
     private static func dataSourceString(_ source: MoEngagePersonalizeDataSource) -> String {
         switch source {
         case .cache:
@@ -109,8 +122,12 @@ class MoEngagePluginPersonalizeUtils {
             return MoEngagePluginPersonalizeConstants.FailureReasons.experienceNotActive
         case .campaignExpired:
             return MoEngagePluginPersonalizeConstants.FailureReasons.experienceExpired
+        case .personalizationFailed:
+            return MoEngagePluginPersonalizeConstants.FailureReasons.personalizationFailed
         case .sdkNotInitialized:
             return MoEngagePluginPersonalizeConstants.FailureReasons.sdkNotInitialized
+        case .sdkDisabled:
+            return MoEngagePluginPersonalizeConstants.FailureReasons.sdkDisabled
         case .featureDisabled:
             return MoEngagePluginPersonalizeConstants.FailureReasons.featureDisabled
         case .networkError:
@@ -119,6 +136,10 @@ class MoEngagePluginPersonalizeUtils {
             return MoEngagePluginPersonalizeConstants.FailureReasons.httpError
         case .parseError:
             return MoEngagePluginPersonalizeConstants.FailureReasons.parseError
+        case .unknownServerError:
+            return MoEngagePluginPersonalizeConstants.FailureReasons.unknownServerError
+        case .unknownError:
+            return MoEngagePluginPersonalizeConstants.FailureReasons.unknown
         @unknown default:
             return MoEngagePluginPersonalizeConstants.FailureReasons.unknown
         }

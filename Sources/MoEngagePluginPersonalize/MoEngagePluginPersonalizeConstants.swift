@@ -29,6 +29,12 @@ struct MoEngagePluginPersonalizeConstants {
         static let error = "error"
     }
 
+    struct ExperienceStatusValues {
+        static let active = "active"
+        static let paused = "paused"
+        static let scheduled = "scheduled"
+    }
+
     struct DataSourceValues {
         static let cache = "CACHE"
         static let network = "NETWORK"
@@ -44,10 +50,12 @@ struct MoEngagePluginPersonalizeConstants {
         static let experienceExpired = "EXPERIENCE_EXPIRED"
         static let personalizationFailed = "PERSONALIZATION_FAILED"
         static let sdkNotInitialized = "SDK_NOT_INITIALIZED"
+        static let sdkDisabled = "SDK_DISABLED"
         static let featureDisabled = "FEATURE_DISABLED"
         static let networkError = "NETWORK_ERROR"
         static let httpError = "HTTP_ERROR"
         static let parseError = "PARSE_ERROR"
+        static let unknownServerError = "UNKNOWN_SERVER_ERROR"
         static let unknown = "UNKNOWN"
     }
 }

@@ -6,7 +6,7 @@
 //
 
 import Foundation
-import MoEngagePersonalize
+import MoEngagePersonalization
 import MoEngagePluginBase
 
 @objc final public class MoEngagePluginPersonalizeBridge: NSObject {
@@ -80,11 +80,9 @@ import MoEngagePluginBase
               let campaigns = MoEngagePluginPersonalizeParser.parseCampaigns(from: payload)
         else { return }
 
-        for campaign in campaigns {
-            MoEngageSDKPersonalize.sharedInstance.trackExperienceShown(
-                campaign: campaign, workspaceId: identifier
-            )
-        }
+        MoEngageSDKPersonalize.sharedInstance.trackExperiencesShown(
+            campaigns: campaigns, workspaceId: identifier
+        )
     }
 
     @objc public func trackExperienceClicked(_ payload: [String: Any]) {
@@ -107,11 +105,9 @@ import MoEngagePluginBase
               let offeringAttrs = data[MoEngagePluginPersonalizeConstants.Personalize.offeringAttributes] as? [[String: Any]]
         else { return }
 
-        for attrs in offeringAttrs {
-            MoEngageSDKPersonalize.sharedInstance.trackOfferingShown(
-                offeringAttributes: attrs, workspaceId: identifier
-            )
-        }
+        MoEngageSDKPersonalize.sharedInstance.trackOfferingsShown(
+            offeringsAttributes: offeringAttrs, workspaceId: identifier
+        )
     }
 
     @objc public func trackOfferingClicked(_ payload: [String: Any]) {

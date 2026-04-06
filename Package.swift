@@ -27,7 +27,7 @@ let package = Package(
             name: "MoEngagePluginPersonalize",
             dependencies: [
                 .product(name: "MoEngagePluginBase", package: "iOS-PluginBase"),
-                .product(name: "MoEngagePersonalize", package: "apple-sdk")
+                .product(name: "MoEngagePersonalization", package: "apple-sdk")
             ],
             linkerSettings: [
                 .linkedFramework("UIKit"),
