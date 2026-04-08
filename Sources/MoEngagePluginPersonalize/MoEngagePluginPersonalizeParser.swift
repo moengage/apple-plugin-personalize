@@ -9,7 +9,7 @@ import Foundation
 import MoEngagePersonalization
 import MoEngagePluginBase
 
-class MoEngagePluginPersonalizeParser {
+enum MoEngagePluginPersonalizeParser {
 
     static func parseStatuses(from payload: [String: Any]) -> [MoEngageExperienceStatus] {
         guard let data = payload[MoEngagePluginConstants.General.data] as? [String: Any],
@@ -47,20 +47,20 @@ class MoEngagePluginPersonalizeParser {
             return nil
         }
 
-        return experiences.compactMap { exp in
-            guard let key = exp[MoEngagePluginPersonalizeConstants.Personalize.experienceKey] as? String,
-                  let payload = exp[MoEngagePluginConstants.General.payload] as? [String: Any],
-                  let context = exp[MoEngagePluginPersonalizeConstants.Personalize.experienceContext] as? [String: Any]
-            else { return nil }
+        return experiences.compactMap { parseSingleCampaign(from: $0) }
+    }
 
-            let source = parseDataSource(from: exp)
+    static func parseSingleCampaign(from dict: [String: Any]) -> MoEngageExperienceCampaign? {
+        guard let key = dict[MoEngagePluginPersonalizeConstants.Personalize.experienceKey] as? String,
+              let payload = dict[MoEngagePluginConstants.General.payload] as? [String: Any],
+              let context = dict[MoEngagePluginPersonalizeConstants.Personalize.experienceContext] as? [String: Any]
+        else { return nil }
 
-            return MoEngageExperienceCampaign(
-                experienceKey: key,
-                payload: payload,
-                experienceContext: context,
-                source: source
-            )
-        }
+        return MoEngageExperienceCampaign(
+            experienceKey: key,
+            payload: payload,
+            experienceContext: context,
+            source: parseDataSource(from: dict)
+        )
     }
 }

@@ -9,6 +9,11 @@ import Foundation
 import MoEngagePersonalization
 import MoEngagePluginBase
 
+/// Bridge layer between hybrid SDKs (React Native, Flutter) and the native
+/// `MoEngageSDKPersonalize` APIs for experience and offering operations.
+///
+/// All public methods accept a JSON payload dictionary from the hybrid layer,
+/// parse it into native types, and forward to the corresponding native SDK API.
 @objc final public class MoEngagePluginPersonalizeBridge: NSObject {
     @objc public static let sharedInstance = MoEngagePluginPersonalizeBridge()
 
@@ -17,6 +22,11 @@ import MoEngagePluginBase
 
     // MARK: - Fetch APIs (Completion-based)
 
+    /// Fetches experience campaign metadata filtered by status.
+    ///
+    /// - Parameters:
+    ///   - payload: JSON dictionary containing `accountMeta` and `data.status` (array of status strings).
+    ///   - completionHandler: Returns a JSON dictionary with metadata on success or error details on failure.
     @objc public func fetchExperiencesMeta(
         _ payload: [String: Any],
         completionHandler: @escaping (([String: Any]) -> Void)
@@ -43,6 +53,11 @@ import MoEngagePluginBase
         )
     }
 
+    /// Fetches experience campaigns for the given keys and optional attributes.
+    ///
+    /// - Parameters:
+    ///   - payload: JSON dictionary containing `accountMeta`, `data.experienceKeys`, and optional `data.attributes`.
+    ///   - completionHandler: Returns a JSON dictionary with experiences/failures on success or error details on failure.
     @objc public func fetchExperiences(
         _ payload: [String: Any],
         completionHandler: @escaping (([String: Any]) -> Void)
@@ -75,6 +90,9 @@ import MoEngagePluginBase
 
     // MARK: - Experience Tracking
 
+    /// Tracks impression events for one or more experience campaigns.
+    ///
+    /// - Parameter payload: JSON dictionary containing `accountMeta` and `data.experiences` array.
     @objc public func trackExperienceShown(_ payload: [String: Any]) {
         guard let identifier = MoEngagePluginUtils.fetchIdentifierFromPayload(attribute: payload),
               let campaigns = MoEngagePluginPersonalizeParser.parseCampaigns(from: payload)
@@ -85,20 +103,26 @@ import MoEngagePluginBase
         )
     }
 
+    /// Tracks a click event for a single experience campaign.
+    ///
+    /// - Parameter payload: JSON dictionary containing `accountMeta` and `data.experience` (single campaign object).
     @objc public func trackExperienceClicked(_ payload: [String: Any]) {
         guard let identifier = MoEngagePluginUtils.fetchIdentifierFromPayload(attribute: payload),
-              let campaigns = MoEngagePluginPersonalizeParser.parseCampaigns(from: payload)
+              let data = payload[MoEngagePluginConstants.General.data] as? [String: Any],
+              let experienceDict = data[MoEngagePluginPersonalizeConstants.Personalize.experience] as? [String: Any],
+              let campaign = MoEngagePluginPersonalizeParser.parseSingleCampaign(from: experienceDict)
         else { return }
 
-        for campaign in campaigns {
-            MoEngageSDKPersonalize.sharedInstance.trackExperienceClicked(
-                campaign: campaign, workspaceId: identifier
-            )
-        }
+        MoEngageSDKPersonalize.sharedInstance.trackExperienceClicked(
+            campaign: campaign, workspaceId: identifier
+        )
     }
 
     // MARK: - Offering Tracking
 
+    /// Tracks impression events for one or more offerings.
+    ///
+    /// - Parameter payload: JSON dictionary containing `accountMeta` and `data.offeringAttributes` (array of dictionaries).
     @objc public func trackOfferingShown(_ payload: [String: Any]) {
         guard let identifier = MoEngagePluginUtils.fetchIdentifierFromPayload(attribute: payload),
               let data = payload[MoEngagePluginConstants.General.data] as? [String: Any],
@@ -110,12 +134,16 @@ import MoEngagePluginBase
         )
     }
 
+    /// Tracks a click event for a single offering within an experience campaign.
+    ///
+    /// - Parameter payload: JSON dictionary containing `accountMeta`, `data.experience` (single campaign object),
+    ///   and `data.offeringAttributes` (single offering dict).
     @objc public func trackOfferingClicked(_ payload: [String: Any]) {
         guard let identifier = MoEngagePluginUtils.fetchIdentifierFromPayload(attribute: payload),
-              let campaigns = MoEngagePluginPersonalizeParser.parseCampaigns(from: payload),
               let data = payload[MoEngagePluginConstants.General.data] as? [String: Any],
-              let offeringAttrs = data[MoEngagePluginPersonalizeConstants.Personalize.offeringAttributes] as? [String: Any],
-              let campaign = campaigns.first
+              let experienceDict = data[MoEngagePluginPersonalizeConstants.Personalize.experience] as? [String: Any],
+              let campaign = MoEngagePluginPersonalizeParser.parseSingleCampaign(from: experienceDict),
+              let offeringAttrs = data[MoEngagePluginPersonalizeConstants.Personalize.offeringAttributes] as? [String: Any]
         else { return }
 
         MoEngageSDKPersonalize.sharedInstance.trackOfferingClicked(

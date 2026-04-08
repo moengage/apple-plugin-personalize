@@ -7,9 +7,9 @@
 
 import Foundation
 
-struct MoEngagePluginPersonalizeConstants {
+enum MoEngagePluginPersonalizeConstants {
 
-    struct Personalize {
+    enum Personalize {
         // Request keys
         static let status = "status"
         static let experienceKeys = "experienceKeys"
@@ -17,6 +17,7 @@ struct MoEngagePluginPersonalizeConstants {
         static let experiences = "experiences"
         static let experienceKey = "experienceKey"
         static let experienceContext = "experienceContext"
+        static let experience = "experience"
         static let offeringAttributes = "offeringAttributes"
 
         // Response keys
@@ -29,18 +30,18 @@ struct MoEngagePluginPersonalizeConstants {
         static let error = "error"
     }
 
-    struct ExperienceStatusValues {
+    enum ExperienceStatusValues {
         static let active = "active"
         static let paused = "paused"
         static let scheduled = "scheduled"
     }
 
-    struct DataSourceValues {
+    enum DataSourceValues {
         static let cache = "CACHE"
         static let network = "NETWORK"
     }
 
-    struct FailureReasons {
+    enum FailureReasons {
         static let userInCampaignControlGroup = "USER_IN_CAMPAIGN_CONTROL_GROUP"
         static let userInGlobalControlGroup = "USER_IN_GLOBAL_CONTROL_GROUP"
         static let userNotInSegment = "USER_NOT_IN_SEGMENT"

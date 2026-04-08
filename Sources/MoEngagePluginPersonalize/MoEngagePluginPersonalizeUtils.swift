@@ -9,7 +9,7 @@ import Foundation
 import MoEngagePersonalization
 import MoEngagePluginBase
 
-class MoEngagePluginPersonalizeUtils {
+enum MoEngagePluginPersonalizeUtils {
 
     // MARK: - Native to Hybrid Serialization
 
