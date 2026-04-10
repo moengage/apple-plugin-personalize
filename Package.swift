@@ -34,6 +34,10 @@ let package = Package(
                 .linkedFramework("Foundation")
             ]
         ),
+        .testTarget(
+            name: "MoEngagePluginPersonalizeTests",
+            dependencies: ["MoEngagePluginPersonalize"]
+        ),
     ],
     swiftLanguageVersions: [.v5]
 )
