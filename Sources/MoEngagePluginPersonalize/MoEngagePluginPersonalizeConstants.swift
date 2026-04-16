@@ -45,7 +45,7 @@ enum MoEngagePluginPersonalizeConstants {
         static let userInCampaignControlGroup = "USER_IN_CAMPAIGN_CONTROL_GROUP"
         static let userInGlobalControlGroup = "USER_IN_GLOBAL_CONTROL_GROUP"
         static let userNotInSegment = "USER_NOT_IN_SEGMENT"
-        static let invalidExperienceKey = "IN_VALID_EXPERIENCE_KEY"
+        static let invalidExperienceKey = "INVALID_EXPERIENCE_KEY"
         static let maxLimitBreached = "MAX_LIMIT_BREACHED"
         static let experienceNotActive = "EXPERIENCE_NOT_ACTIVE"
         static let experienceExpired = "EXPERIENCE_EXPIRED"

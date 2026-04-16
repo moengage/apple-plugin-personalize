@@ -50,8 +50,7 @@ enum MoEngagePluginPersonalizeUtils {
         let failures = result.failures.map { failure -> [String: Any] in
             return [
                 MoEngagePluginPersonalizeConstants.Personalize.reason: mapFailureReason(failure.code),
-                MoEngagePluginPersonalizeConstants.Personalize.experienceKeys: failure.experienceKeys ?? [],
-                MoEngagePluginPersonalizeConstants.Personalize.message: failure.message
+                MoEngagePluginPersonalizeConstants.Personalize.experienceKeys: failure.experienceKeys ?? []
             ]
         }
 

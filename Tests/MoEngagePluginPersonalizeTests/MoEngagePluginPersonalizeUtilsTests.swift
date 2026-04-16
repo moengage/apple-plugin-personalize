@@ -153,9 +153,9 @@ struct ExperienceResultToJSONTests {
 
         #expect(experiences?.isEmpty == true)
         #expect(failures?.count == 1)
-        #expect(failures?[0]["reason"] as? String == "IN_VALID_EXPERIENCE_KEY")
-        #expect(failures?[0]["message"] as? String == "Key not found")
+        #expect(failures?[0]["reason"] as? String == "INVALID_EXPERIENCE_KEY")
         #expect((failures?[0]["experienceKeys"] as? [String])?.first == "bad_key")
+        #expect(failures?[0]["message"] == nil)
     }
 
     @Test("Result with both experiences and failures")
@@ -268,7 +268,7 @@ struct FailureReasonMappingTests {
             (.userInCampaignControlGroup, "USER_IN_CAMPAIGN_CONTROL_GROUP"),
             (.userInGlobalControlGroup, "USER_IN_GLOBAL_CONTROL_GROUP"),
             (.userNotInSegment, "USER_NOT_IN_SEGMENT"),
-            (.invalidExperienceKey, "IN_VALID_EXPERIENCE_KEY"),
+            (.invalidExperienceKey, "INVALID_EXPERIENCE_KEY"),
             (.maxLimitBreached, "MAX_LIMIT_BREACHED"),
             (.campaignNotActive, "EXPERIENCE_NOT_ACTIVE"),
             (.campaignExpired, "EXPERIENCE_EXPIRED"),
