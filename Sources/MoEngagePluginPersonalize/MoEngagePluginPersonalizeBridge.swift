@@ -93,12 +93,12 @@ import MoEngagePluginBase
     /// Tracks impression events for one or more experience campaigns.
     ///
     /// - Parameter payload: JSON dictionary containing `accountMeta` and `data.experiences` array.
-    @objc public func trackExperienceShown(_ payload: [String: Any]) {
+    @objc public func experienceShown(_ payload: [String: Any]) {
         guard let identifier = MoEngagePluginUtils.fetchIdentifierFromPayload(attribute: payload),
               let campaigns = MoEngagePluginPersonalizeParser.parseCampaigns(from: payload)
         else { return }
 
-        MoEngageSDKPersonalize.sharedInstance.trackExperiencesShown(
+        MoEngageSDKPersonalize.sharedInstance.experiencesShown(
             campaigns: campaigns, workspaceId: identifier
         )
     }
@@ -106,14 +106,14 @@ import MoEngagePluginBase
     /// Tracks a click event for a single experience campaign.
     ///
     /// - Parameter payload: JSON dictionary containing `accountMeta` and `data.experience` (single campaign object).
-    @objc public func trackExperienceClicked(_ payload: [String: Any]) {
+    @objc public func experienceClicked(_ payload: [String: Any]) {
         guard let identifier = MoEngagePluginUtils.fetchIdentifierFromPayload(attribute: payload),
               let data = payload[MoEngagePluginConstants.General.data] as? [String: Any],
               let experienceDict = data[MoEngagePluginPersonalizeConstants.Personalize.experience] as? [String: Any],
               let campaign = MoEngagePluginPersonalizeParser.parseSingleCampaign(from: experienceDict)
         else { return }
 
-        MoEngageSDKPersonalize.sharedInstance.trackExperienceClicked(
+        MoEngageSDKPersonalize.sharedInstance.experienceClicked(
             campaign: campaign, workspaceId: identifier
         )
     }
@@ -122,33 +122,33 @@ import MoEngagePluginBase
 
     /// Tracks impression events for one or more offerings.
     ///
-    /// - Parameter payload: JSON dictionary containing `accountMeta` and `data.offeringAttributes` (array of dictionaries).
-    @objc public func trackOfferingShown(_ payload: [String: Any]) {
+    /// - Parameter payload: JSON dictionary containing `accountMeta` and `data.offeringPayloads` (array of full offering dicts).
+    @objc public func offeringShown(_ payload: [String: Any]) {
         guard let identifier = MoEngagePluginUtils.fetchIdentifierFromPayload(attribute: payload),
               let data = payload[MoEngagePluginConstants.General.data] as? [String: Any],
-              let offeringAttrs = data[MoEngagePluginPersonalizeConstants.Personalize.offeringAttributes] as? [[String: Any]]
+              let offeringPayloads = data[MoEngagePluginPersonalizeConstants.Personalize.offeringPayloads] as? [[String: Any]]
         else { return }
 
-        MoEngageSDKPersonalize.sharedInstance.trackOfferingsShown(
-            offeringsAttributes: offeringAttrs, workspaceId: identifier
+        MoEngageSDKPersonalize.sharedInstance.offeringsShown(
+            offeringPayloads: offeringPayloads, workspaceId: identifier
         )
     }
 
     /// Tracks a click event for a single offering within an experience campaign.
     ///
     /// - Parameter payload: JSON dictionary containing `accountMeta`, `data.experience` (single campaign object),
-    ///   and `data.offeringAttributes` (single offering dict).
-    @objc public func trackOfferingClicked(_ payload: [String: Any]) {
+    ///   and `data.offeringPayload` (full offering dict).
+    @objc public func offeringClicked(_ payload: [String: Any]) {
         guard let identifier = MoEngagePluginUtils.fetchIdentifierFromPayload(attribute: payload),
               let data = payload[MoEngagePluginConstants.General.data] as? [String: Any],
               let experienceDict = data[MoEngagePluginPersonalizeConstants.Personalize.experience] as? [String: Any],
               let campaign = MoEngagePluginPersonalizeParser.parseSingleCampaign(from: experienceDict),
-              let offeringAttrs = data[MoEngagePluginPersonalizeConstants.Personalize.offeringAttributes] as? [String: Any]
+              let offeringPayload = data[MoEngagePluginPersonalizeConstants.Personalize.offeringPayload] as? [String: Any]
         else { return }
 
-        MoEngageSDKPersonalize.sharedInstance.trackOfferingClicked(
+        MoEngageSDKPersonalize.sharedInstance.offeringClicked(
             campaign: campaign,
-            offeringAttributes: offeringAttrs,
+            offeringPayload: offeringPayload,
             workspaceId: identifier
         )
     }

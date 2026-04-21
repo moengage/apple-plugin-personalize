@@ -18,7 +18,8 @@ enum MoEngagePluginPersonalizeConstants {
         static let experienceKey = "experienceKey"
         static let experienceContext = "experienceContext"
         static let experience = "experience"
-        static let offeringAttributes = "offeringAttributes"
+        static let offeringPayloads = "offeringPayloads"
+        static let offeringPayload = "offeringPayload"
 
         // Response keys
         static let experienceName = "experienceName"

@@ -63,7 +63,8 @@ struct ConstantsVerificationTests {
         #expect(MoEngagePluginPersonalizeConstants.Personalize.experienceKey == "experienceKey")
         #expect(MoEngagePluginPersonalizeConstants.Personalize.experienceContext == "experienceContext")
         #expect(MoEngagePluginPersonalizeConstants.Personalize.experience == "experience")
-        #expect(MoEngagePluginPersonalizeConstants.Personalize.offeringAttributes == "offeringAttributes")
+        #expect(MoEngagePluginPersonalizeConstants.Personalize.offeringPayloads == "offeringPayloads")
+        #expect(MoEngagePluginPersonalizeConstants.Personalize.offeringPayload == "offeringPayload")
     }
 
     @Test("Response key constants match contract JSON keys")
