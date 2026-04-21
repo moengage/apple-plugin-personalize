@@ -93,7 +93,7 @@ import MoEngagePluginBase
     /// Tracks impression events for one or more experience campaigns.
     ///
     /// - Parameter payload: JSON dictionary containing `accountMeta` and `data.experiences` array.
-    @objc public func experienceShown(_ payload: [String: Any]) {
+    @objc public func experiencesShown(_ payload: [String: Any]) {
         guard let identifier = MoEngagePluginUtils.fetchIdentifierFromPayload(attribute: payload),
               let campaigns = MoEngagePluginPersonalizeParser.parseCampaigns(from: payload)
         else { return }
@@ -123,7 +123,7 @@ import MoEngagePluginBase
     /// Tracks impression events for one or more offerings.
     ///
     /// - Parameter payload: JSON dictionary containing `accountMeta` and `data.offeringPayloads` (array of full offering dicts).
-    @objc public func offeringShown(_ payload: [String: Any]) {
+    @objc public func offeringsShown(_ payload: [String: Any]) {
         guard let identifier = MoEngagePluginUtils.fetchIdentifierFromPayload(attribute: payload),
               let data = payload[MoEngagePluginConstants.General.data] as? [String: Any],
               let offeringPayloads = data[MoEngagePluginPersonalizeConstants.Personalize.offeringPayloads] as? [[String: Any]]
