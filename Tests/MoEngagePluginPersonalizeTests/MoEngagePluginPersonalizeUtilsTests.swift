@@ -218,6 +218,145 @@ struct ExperienceResultToJSONTests {
         #expect(payload?["number"] as? Int == 42)
         #expect((payload?["level1"] as? [String: Any])?["level2"] as? String == "deep")
     }
+
+    @Test("Offerings envelope is unwrapped to a stringified JSON array")
+    func offeringsEnvelopeUnwrapped() {
+        // Real-world MOEN-44566 reproduction shape: server wraps offerings as
+        // { value: "[stringified JSON array]", data_type: "string" }.
+        let offeringsJsonString = "[{\"dp_offering_id\":\"offer_1\",\"offering_content\":{\"type\":\"json\"},\"offering_context\":{\"moe_offering_id\":\"offer_1\"}}]"
+        let envelopedPayload: [String: Any] = [
+            "offerings": [
+                "value": offeringsJsonString,
+                "data_type": "string"
+            ]
+        ]
+        let result = MoEngageExperienceCampaignsResult(
+            experiences: [
+                MoEngageExperienceCampaign(
+                    experienceKey: "offr321",
+                    payload: envelopedPayload,
+                    experienceContext: ["cid": "abc"],
+                    source: .network
+                )
+            ],
+            failures: []
+        )
+
+        let json = MoEngagePluginPersonalizeUtils.experienceResultToJSON(result: result, identifier: "app")
+        let data = json["data"] as? [String: Any]
+        let experiences = data?["experiences"] as? [[String: Any]]
+        let payload = experiences?[0]["payload"] as? [String: Any]
+
+        // After unwrap, payload[offerings] is the inner stringified JSON array — not the envelope.
+        #expect(payload?["offerings"] as? String == offeringsJsonString)
+        // Envelope keys must be gone.
+        #expect((payload?["offerings"] as? [String: Any]) == nil)
+    }
+}
+
+// MARK: - Unwrap Payload
+
+@Suite("Unwrap Payload")
+struct UnwrapPayloadTests {
+
+    @Test("Envelope with String value lifts the inner string")
+    func stringEnvelope() {
+        let raw: [String: Any] = [
+            "k": ["value": "hello", "data_type": "string"]
+        ]
+        let out = MoEngagePluginPersonalizeUtils.unwrapPayload(raw)
+        #expect(out["k"] as? String == "hello")
+    }
+
+    @Test("Envelope with Int value lifts the inner number")
+    func numberEnvelope() {
+        let raw: [String: Any] = [
+            "k": ["value": 42, "data_type": "number"]
+        ]
+        let out = MoEngagePluginPersonalizeUtils.unwrapPayload(raw)
+        #expect(out["k"] as? Int == 42)
+    }
+
+    @Test("Envelope with Double value lifts the inner double")
+    func floatEnvelope() {
+        let raw: [String: Any] = [
+            "k": ["value": 3.14, "data_type": "float"]
+        ]
+        let out = MoEngagePluginPersonalizeUtils.unwrapPayload(raw)
+        #expect(out["k"] as? Double == 3.14)
+    }
+
+    @Test("Envelope with Bool value lifts the inner bool")
+    func booleanEnvelope() {
+        let raw: [String: Any] = [
+            "k": ["value": true, "data_type": "boolean"]
+        ]
+        let out = MoEngagePluginPersonalizeUtils.unwrapPayload(raw)
+        #expect(out["k"] as? Bool == true)
+    }
+
+    @Test("Envelope with Dict value lifts the inner dict")
+    func jsonDictEnvelope() {
+        let raw: [String: Any] = [
+            "k": ["value": ["nested": "obj"], "data_type": "json"]
+        ]
+        let out = MoEngagePluginPersonalizeUtils.unwrapPayload(raw)
+        let lifted = out["k"] as? [String: Any]
+        #expect(lifted?["nested"] as? String == "obj")
+    }
+
+    @Test("Envelope with Array value lifts the inner array")
+    func jsonArrayEnvelope() {
+        let raw: [String: Any] = [
+            "k": ["value": [1, 2, 3], "data_type": "json"]
+        ]
+        let out = MoEngagePluginPersonalizeUtils.unwrapPayload(raw)
+        #expect((out["k"] as? [Int]) == [1, 2, 3])
+    }
+
+    @Test("Entry without `value` key passes through unchanged")
+    func nonEnvelopeDictPassthrough() {
+        // Dict with no `value` key — not an envelope. Pass-through.
+        let raw: [String: Any] = [
+            "k": ["unrelated": "data", "data_type": "string"]
+        ]
+        let out = MoEngagePluginPersonalizeUtils.unwrapPayload(raw)
+        let entry = out["k"] as? [String: Any]
+        #expect(entry?["unrelated"] as? String == "data")
+        #expect(entry?["data_type"] as? String == "string")
+    }
+
+    @Test("Primitive entry (not a dict) passes through unchanged")
+    func primitivePassthrough() {
+        let raw: [String: Any] = [
+            "s": "raw string",
+            "n": 7,
+            "b": false
+        ]
+        let out = MoEngagePluginPersonalizeUtils.unwrapPayload(raw)
+        #expect(out["s"] as? String == "raw string")
+        #expect(out["n"] as? Int == 7)
+        #expect(out["b"] as? Bool == false)
+    }
+
+    @Test("Empty payload returns empty payload")
+    func emptyPayload() {
+        let out = MoEngagePluginPersonalizeUtils.unwrapPayload([:])
+        #expect(out.isEmpty)
+    }
+
+    @Test("Multiple entries with mixed shapes are each handled")
+    func mixedEntries() {
+        let raw: [String: Any] = [
+            "wrapped": ["value": "lifted", "data_type": "string"],
+            "raw": "passthrough",
+            "halfwrapped": ["data_type": "string"]   // missing value → pass-through
+        ]
+        let out = MoEngagePluginPersonalizeUtils.unwrapPayload(raw)
+        #expect(out["wrapped"] as? String == "lifted")
+        #expect(out["raw"] as? String == "passthrough")
+        #expect((out["halfwrapped"] as? [String: Any])?["data_type"] as? String == "string")
+    }
 }
 
 // MARK: - Error to JSON

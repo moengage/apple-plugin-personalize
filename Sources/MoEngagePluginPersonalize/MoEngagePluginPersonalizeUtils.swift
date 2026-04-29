@@ -41,7 +41,7 @@ enum MoEngagePluginPersonalizeUtils {
         let experiences = result.experiences.map { campaign -> [String: Any] in
             return [
                 MoEngagePluginPersonalizeConstants.Personalize.experienceKey: campaign.experienceKey,
-                MoEngagePluginConstants.General.payload: campaign.payload,
+                MoEngagePluginConstants.General.payload: unwrapPayload(campaign.payload),
                 MoEngagePluginPersonalizeConstants.Personalize.experienceContext: campaign.experienceContext,
                 MoEngagePluginPersonalizeConstants.Personalize.source: dataSourceString(campaign.source)
             ]
@@ -142,5 +142,29 @@ enum MoEngagePluginPersonalizeUtils {
         @unknown default:
             return MoEngagePluginPersonalizeConstants.FailureReasons.unknown
         }
+    }
+
+    /// Lifts the inner `value` out of each `{ "value": X, "data_type": "..." }` envelope on
+    /// the top-level `payload` map. Trusts JSONSerialization to have already typed each
+    /// primitive natively, so no per-data_type coercion is needed.
+    ///
+    /// Pass-through for entries that aren't envelope-shaped — keeps the helper forward-
+    /// compatible if the backend ever sends payload entries without the wrapper.
+    ///
+    /// Lives at the plugin layer (instead of the iOS native SDK) so `MoEngagePersonalization`
+    /// stays free of `data_type` parsing. After this, hybrid (RN/Flutter) consumers see the
+    /// same plain-value shape Android already exposes via `ExperiencePayloadKeyValue.mapToAny()`.
+    static func unwrapPayload(_ raw: [String: Any]) -> [String: Any] {
+        var out: [String: Any] = [:]
+        out.reserveCapacity(raw.count)
+        for (key, rawValue) in raw {
+            if let envelope = rawValue as? [String: Any],
+               let value = envelope["value"] {
+                out[key] = value
+            } else {
+                out[key] = rawValue
+            }
+        }
+        return out
     }
 }
