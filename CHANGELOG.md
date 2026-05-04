@@ -1,5 +1,6 @@
-# Release Date
+# 04-05-2026
 
-## Release Version
+## 1.0.0
 
-- [major] Added Personalize Experience APIs support
+- Updated MoEngage-iOS-SDK to 10.12.0
+- Added Personalize Experience APIs support
