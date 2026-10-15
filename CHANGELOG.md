@@ -1,3 +1,9 @@
+# Release Date
+
+## Release Version
+
+- [patch] Depend on `MoEngage-iOS-SDK/Personalization` instead of an unpinned `MoEngagePersonalization`, so CocoaPods installs the Personalization version that matches the iOS SDK.
+
 # 16-09-2026
 
 ## 2.2.0
