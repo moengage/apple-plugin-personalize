@@ -1,12 +1,12 @@
 {
   "name": "MoEngagePluginPersonalize",
   "postBuild": "Utilities/post_build.rb",
-  "sdkVerMin": "11.05.0",
-  "pluginbaseVerMin": "7.04.0",
+  "sdkVerMin": "11.05.1",
+  "pluginbaseVerMin": "7.04.1",
   "packages": [
     {
       "name": "MoEngagePluginPersonalize",
-      "version": "2.4.0",
+      "version": "2.4.1",
       "changelog": "CHANGELOG.md",
       "tagPrefix": "pluginPersonalize-"
     }
